@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lamp Login</title>
+        <style>
+            body{
+                margin:0;
+                height:100vh;
+                background:#08152e;
+                font-family:sans-serif;
+                color:white;
+                display:flex;
+                flex-direction:column;
+                align-items:center;
+                overflow:hidden;
+                overflow-y:auto;
+            }
+            .lamp{
+                margin-top:40px;
+                display:flex;
+                flex-direction:column;
+                align-items:center;
+            }
+            .head{
+                width:150px;
+                height:90px;
+                background:linear-gradient(145deg,#f5f5f5,#cfcfcf);
+                border-radius:100px 100px 30px 30px;
+                box-shadow:
+                inset -8px -8px 12px rgba(0,0,0,0.2),
+                inset 8px 8px 12px rgba(255,255,255,0.6),
+                0 10px 25px rgba(0,0,0,0.5);
+            }
+            .string{
+                width:3px;
+                height:90px;
+                background:#eee;
+                cursor:pointer;
+                position:relative;
+                transition:0.2s;
+            }
+            .string.pull{
+                transform:translateY(40px);
+            }
+            .ball{
+                width:18px;
+                height:18px;
+                background:#ffc857;
+                border-radius:50%;
+                position:absolute;
+                bottom:-9px;
+                left:-7px;
+            }
+            .light{
+                position:absolute;
+                top:160px;
+                width:600px;
+                height:500px;
+                background:radial-gradient(circle, rgba(255,230,150,0.6), transparent 70%);
+                opacity:0;
+                transition:0.5s;
+            }
+            body.on .light{
+                opacity:1;
+            }
+            *{
+                box-sizing:border-box;
+            }
+            .page{
+                margin-top:40px;
+                width:420px;
+                padding:35px;
+                border-radius:18px;
+                background:rgba(255,255,255,0.08);
+                backdrop-filter:blur(15px);
+                box-shadow:0 10px 40px rgba(0,0,0,0.5);
+                text-align:center;
+                display:none;
+                animation:fadeUp 0.6s;
+            }
+            .page.show{
+                display:block;
+            }
+            @keyframes fadeUp{
+                0%{
+                    opacity:0;
+                    transform:translateY(40px);
+                }
+                100%{
+                    opacity:1;
+                    transform:translateY(0);
+                }
+            }
+            input{
+                width:100%;
+                padding:12px;
+                margin:8px 0;
+                border:none;
+                border-radius:10px;
+                font-size:14px;
+                display:block;
+            }
+            button{
+                width:100%;
+                padding:12px;
+                border:none;
+                border-radius:10px;
+                margin-top:10px;
+                cursor:pointer;
+                font-weight:bold;
+                display:block;
+            }
+            .login-btn{
+                background:#4aa3ff;
+                color:white;
+            }
+            .register-btn{
+                background:#ffc857;
+                color:black;
+            }
+            .link{
+                margin-top:12px;
+                display:block;
+                text-align:center;
+                cursor:pointer;
+                color:#ffc857;
+                font-size:15px;
+            }
+            .rules{
+                font-size:11px;
+                text-align:left;
+                margin-top:4px;
+                opacity:0.8;
+                line-height:16px;
+            }
+            .valid{
+                color:#7CFF8D;
+            }
+            .invalid{
+                color:#ff7c7c;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="light"></div>
+        <div class="lamp">
+            <div class="head"></div>
+            <div class="string" id="string" onclick="pullLamp()">
+                <div class="ball"></div>
+            </div>
+        </div>
+        <div class="page" id="loginPage">
+            <h2>Login</h2>
+            <input placeholder="Username">
+            <input type="password" placeholder="Password">
+            <button class="login-btn">Login</button>
+            <div class="link" onclick="showRegister()">Register</div>
+        </div>
+        <div class="page" id="registerPage">
+            <h2>Register</h2>
+            <input placeholder="Username">
+            <input placeholder="Email">
+            <input type="password" id="password" placeholder="Buat Password">
+            <input type="password" placeholder="Konfirmasi Password">
+            <div class="rules">
+                <div id="upper" class="invalid">• Huruf besar</div>
+                <div id="lower" class="invalid">• Huruf kecil</div>
+                <div id="number" class="invalid">• Angka</div>
+                <div id="symbol" class="invalid">• Simbol</div>
+            </div>
+            <button class="register-btn">Daftar</button>
+            <div class="link" onclick="showLogin()">Back to Login</div>
+        </div>
+    
+        <script>
+            let lampOn=false
+            function pullLamp(){
+                const string=document.getElementById("string")
+                string.classList.add("pull")
+                setTimeout(()=>{
+                    string.classList.remove("pull")
+                },200)
+                lampOn=!lampOn
+
+                if(lampOn){
+                    document.body.classList.add("on")
+                    document.getElementById("loginPage").classList.add("show")
+                }
+                else{
+                    document.body.classList.remove("on")
+                    document.getElementById("loginPage").classList.remove("show")
+                    document.getElementById("registerPage").classList.remove("show")
+                }
+            }
+            function showRegister(){
+                document.getElementById("loginPage").classList.remove("show")
+                document.getElementById("registerPage").classList.add("show")
+            }
+            function showLogin(){
+                document.getElementById("registerPage").classList.remove("show")
+                document.getElementById("loginPage").classList.add("show")
+            }
+            const pass=document.getElementById("password")
+            pass.addEventListener("input",function(){
+                const value=pass.value
+                check(value.match(/[A-Z]/),"upper")
+                check(value.match(/[a-z]/),"lower")
+                check(value.match(/[0-9]/),"number")
+                check(value.match(/[^A-Za-z0-9]/),"symbol")
+            })
+            function check(condition,id){
+                const el=document.getElementById(id)
+                if(condition){
+                    el.classList.remove("invalid")
+                    el.classList.add("valid")
+                }
+                else{
+                    el.classList.remove("valid")
+                    el.classList.add("invalid")
+                }
+            }
+        </script>
+    </body>
+</html>
